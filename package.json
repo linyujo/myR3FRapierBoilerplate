@@ -13,10 +13,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@react-three/fiber": "^8.15.11",
+    "@react-three/drei": "^10.5.1",
+    "@react-three/fiber": "^9.1.0",
     "@react-three/rapier": "^1.4.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "three": "^0.160.0",
     "v9": "^2.0.5"
   },
