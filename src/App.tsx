@@ -13,6 +13,7 @@ function App() {
         <Leva collapsed />
         <Canvas
           // orthographic
+          shadows
           gl={{
             alpha: true,
             antialias: true, // 抗鋸齒
@@ -24,10 +25,14 @@ function App() {
             // zoom: 100,
             near: 0.1,
             far: 200,
-            position: new THREE.Vector3(3, 2, 6),
+            position: new THREE.Vector3(-4, 3, 6),
+          }}
+          onCreated={state => {
+            console.log('state', state)
           }}
         >
           <Physics>
+            <color attach="background" args={['#000000']} />
             <Scene />
           </Physics>
         </Canvas>

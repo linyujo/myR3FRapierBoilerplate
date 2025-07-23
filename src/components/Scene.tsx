@@ -1,10 +1,13 @@
-import { useRef, forwardRef, Ref } from 'react'
+import { useRef, forwardRef, Ref, useEffect } from 'react'
 import * as THREE from 'three'
 import { useFrame, useThree } from '@react-three/fiber'
 import {
   Text,
   Html,
   Float,
+  useHelper,
+  SoftShadows,
+  BakeShadows,
   OrbitControls,
   // TransformControls,
   PivotControls,
@@ -48,6 +51,7 @@ const Sphere = forwardRef(({ cubeRef }: TSphereProps, ref) => {
         axisColors={['#9381ff', '#ff4d6d', '#7ae582']}
       >
         <mesh
+          castShadow
           visible={visible}
           ref={ref as Ref<THREE.Mesh>}
           position={[position.x, 0, position.z]}
@@ -94,6 +98,7 @@ const Box = forwardRef((props, ref) => {
   return (
     <>
       <mesh
+        castShadow
         visible={visible}
         ref={ref as Ref<THREE.Mesh>}
         position={[position.x, 0, position.z]}
@@ -117,7 +122,7 @@ const Box = forwardRef((props, ref) => {
 })
 
 const Ground = () => (
-  <mesh position-y={-1} rotation-x={-Math.PI * 0.5} scale={10}>
+  <mesh receiveShadow position-y={-1} rotation-x={-Math.PI * 0.5} scale={10}>
     <planeGeometry />
     <MeshReflectorMaterial
       resolution={512}
@@ -133,10 +138,13 @@ function Scene() {
   const cubeRef = useRef<THREE.Mesh>(null!)
   const sphereRef = useRef<THREE.Mesh>(null!)
   const groupRef = useRef<THREE.Group>(null!)
-  const { gl, camera } = useThree()
+  const directionalLight = useRef<THREE.DirectionalLight>(null!)
+  const shadowCamHelper = useRef<THREE.CameraHelper>(null!)
+  const { gl, camera, scene } = useThree()
   const { perfVisible } = useControls({
     perfVisible: true,
   })
+  // useHelper(directionalLight, THREE.DirectionalLightHelper, 1)
 
   useFrame((state, delta) => {
     const rotateCamera = () => {
@@ -154,9 +162,38 @@ function Scene() {
     }
   })
 
+  useEffect(() => {
+    if (directionalLight.current) {
+      const shadowCam = directionalLight.current.shadow.camera
+      const cameraHelper = new THREE.CameraHelper(shadowCam)
+      shadowCamHelper.current = cameraHelper
+      // scene.add(cameraHelper)
+
+      return () => {
+        scene.remove(cameraHelper)
+        cameraHelper.dispose?.()
+      }
+    }
+    scene.background = new THREE.Color('lightblue')
+  }, [scene])
+
   return (
     <>
-      <directionalLight position={[1, 2, 2]} intensity={5} />
+      {/* <BakeShadows /> */}
+      <SoftShadows size={25} samples={10} focus={0} />
+      <directionalLight
+        castShadow
+        ref={directionalLight}
+        position={[1, 2, 3]}
+        intensity={5}
+        shadow-camera-near={1}
+        shadow-camera-far={10}
+        shadow-camera-top={5}
+        shadow-camera-right={5}
+        shadow-camera-bottom={-5}
+        shadow-camera-left={-5}
+        shadow-mapSize={[512, 512]}
+      />
       <ambientLight intensity={2} />
       <group ref={groupRef}>
         <Sphere ref={sphereRef} cubeRef={cubeRef} />
