@@ -6,10 +6,12 @@ import {
   Html,
   Float,
   OrbitControls,
-  TransformControls,
+  // TransformControls,
   PivotControls,
   MeshReflectorMaterial,
 } from '@react-three/drei'
+import { Perf } from 'r3f-perf'
+import { useControls, button } from 'leva'
 import rubikDirt from '../fonts/rubik-dirt-v2-latin-regular.woff'
 // import CustomObject from './CustomObject'
 
@@ -21,53 +23,98 @@ import rubikDirt from '../fonts/rubik-dirt-v2-latin-regular.woff'
 type TSphereProps = {
   cubeRef: React.RefObject<THREE.Mesh>
 }
-const Sphere = forwardRef(({ cubeRef }: TSphereProps, ref) => (
-  <>
-    <PivotControls
-      anchor={[0, 0, 0]}
-      depthTest={false} // 避免被其他物件擋住
-      lineWidth={2}
-      axisColors={['#9381ff', '#ff4d6d', '#7ae582']}
-    >
-      <mesh ref={ref as Ref<THREE.Mesh>} position-x={-2}>
-        <sphereGeometry />
-        <meshStandardMaterial color="orange" />
-        <Html
-          position-y={1.5}
-          distanceFactor={10}
-          center
-          occlude={[cubeRef, ref as React.RefObject<THREE.Mesh>]}
+const Sphere = forwardRef(({ cubeRef }: TSphereProps, ref) => {
+  const { position, color, visible } = useControls('sphere', {
+    position: {
+      value: { x: -2, z: 0 },
+      min: -4,
+      max: 4,
+      step: 0.2,
+      joystick: 'invertY',
+    },
+    color: '#FFA07A',
+    visible: true,
+    clickMe: button(() => {
+      console.log('sphere click')
+    }),
+  })
+  return (
+    <>
+      <PivotControls
+        enabled={false}
+        anchor={[0, 0, 0]}
+        depthTest={false} // 避免被其他物件擋住
+        lineWidth={2}
+        axisColors={['#9381ff', '#ff4d6d', '#7ae582']}
+      >
+        <mesh
+          visible={visible}
+          ref={ref as Ref<THREE.Mesh>}
+          position={[position.x, 0, position.z]}
         >
-          <div className="position-absolute w-[200px] left-[-100px] text-center bg-[#00000088] text-white p-[14px] rounded-[30px]">
-            This is a ball 😎
-          </div>
-        </Html>
-      </mesh>
-    </PivotControls>
-  </>
-))
+          <sphereGeometry />
+          <meshStandardMaterial color={color} />
+          <Html
+            position-y={1.5}
+            distanceFactor={10}
+            center
+            occlude={[cubeRef, ref as React.RefObject<THREE.Mesh>]}
+          >
+            <div className="position-absolute w-[200px] left-[-100px] text-center bg-[#00000088] text-white p-[14px] rounded-[30px]">
+              This is a ball 😎
+            </div>
+          </Html>
+        </mesh>
+      </PivotControls>
+    </>
+  )
+})
 
-const Box = forwardRef((props, ref) => (
-  <>
-    <mesh
-      ref={ref as Ref<THREE.Mesh>}
-      position-x={2}
-      scale={1.5}
-      rotation-y={Math.PI * 0.25}
-    >
-      <boxGeometry />
-      <meshStandardMaterial color="mediumpurple" />
-    </mesh>
-    {/**
-     * 與其將 TransformControls 包住 mesh，
-     * 不如將 TransformControls 放置於 mesh 下方，
-     * 並用ref將彼此綁定。
-     * 好處是，若未來可能將 TransformControls 移除，
-     * 可以輕易的解除綁定。
-     */}
-    <TransformControls object={ref as Ref<THREE.Mesh>} mode="rotate" />
-  </>
-))
+const Box = forwardRef((props, ref) => {
+  const { position, color, visible, rotationX } = useControls('cube', {
+    position: {
+      value: { x: 2, z: 0 },
+      min: -4,
+      max: 4,
+      step: 0.2,
+      joystick: 'invertY',
+    },
+    rotationX: {
+      value: 0,
+      step: Math.PI * 0.25,
+      min: -Math.PI * 2,
+      max: Math.PI * 2,
+    },
+    color: '#9370DB',
+    visible: true,
+    clickMe: button(() => {
+      console.log('cube click')
+    }),
+  })
+  return (
+    <>
+      <mesh
+        visible={visible}
+        ref={ref as Ref<THREE.Mesh>}
+        position={[position.x, 0, position.z]}
+        scale={1.5}
+        rotation-x={rotationX}
+        rotation-y={Math.PI * 0.25}
+      >
+        <boxGeometry />
+        <meshStandardMaterial color={color} />
+      </mesh>
+      {/**
+       * 與其將 TransformControls 包住 mesh，
+       * 不如將 TransformControls 放置於 mesh 下方，
+       * 並用ref將彼此綁定。
+       * 好處是，若未來可能將 TransformControls 移除，
+       * 可以輕易的解除綁定。
+       */}
+      {/* <TransformControls object={ref as Ref<THREE.Mesh>} mode="rotate" /> */}
+    </>
+  )
+})
 
 const Ground = () => (
   <mesh position-y={-1} rotation-x={-Math.PI * 0.5} scale={10}>
@@ -87,6 +134,9 @@ function Scene() {
   const sphereRef = useRef<THREE.Mesh>(null!)
   const groupRef = useRef<THREE.Group>(null!)
   const { gl, camera } = useThree()
+  const { perfVisible } = useControls({
+    perfVisible: true,
+  })
 
   useFrame((state, delta) => {
     const rotateCamera = () => {
@@ -130,6 +180,7 @@ function Scene() {
       </Float>
       <OrbitControls makeDefault args={[camera, gl.domElement]} />
       {/* makeDefault: 操控TransformControls時，不會與OrbitControls衝突 */}
+      {perfVisible && <Perf position="top-left" />}
     </>
   )
 }
