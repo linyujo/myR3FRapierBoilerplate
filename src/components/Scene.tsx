@@ -1,6 +1,8 @@
 import { useRef, forwardRef, Ref } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { OrbitControls, MeshReflectorMaterial } from '@react-three/drei'
+import { Perf } from 'r3f-perf'
+import { useControls } from 'leva'
 
 const FirstGeometry = forwardRef((props, ref) => (
   <mesh position-y={1} ref={ref as Ref<THREE.Mesh>}>
@@ -23,6 +25,7 @@ const Ground = () => (
 )
 
 function Scene() {
+  const { perfVisible } = useControls({ perfVisible: true })
   const torusKnotRef = useRef<THREE.Mesh>(null!)
   useFrame((state, delta) => {
     if (torusKnotRef.current) {
@@ -36,6 +39,7 @@ function Scene() {
       <FirstGeometry ref={torusKnotRef} />
       <Ground />
       <OrbitControls />
+      {perfVisible && <Perf position="top-left" />}
     </>
   )
 }
