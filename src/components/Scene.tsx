@@ -2,6 +2,7 @@ import { useRef, forwardRef, Ref, useEffect } from 'react'
 import * as THREE from 'three'
 import { useFrame, useThree } from '@react-three/fiber'
 import {
+  Sky,
   Text,
   Html,
   Float,
@@ -131,8 +132,8 @@ const Ground = () => (
       resolution={512}
       blur={[1000, 1000]}
       mixBlur={0.5}
-      mirror={0.5}
-      color="mediumAquamarine"
+      mirror={0.6}
+      color="lightcyan"
     />
   </mesh>
 )
@@ -156,7 +157,10 @@ function Scene() {
     blur: { value: 1, min: 0, max: 10 },
   })
   const skyOptions = useControls('Sky', {
-    sunPosition: { value: [1, 2, 3] },
+    sunPosition: {
+      value: [1, 2, 3],
+    },
+    mieCoefficient: { value: 0.01, min: 0, max: 0.1 },
   })
   // useHelper(directionalLight, THREE.DirectionalLightHelper, 1)
 
@@ -197,7 +201,7 @@ function Scene() {
       <directionalLight
         castShadow
         ref={directionalLight}
-        position={[1, 2, 3]}
+        position={skyOptions.sunPosition}
         intensity={5}
         shadow-camera-near={1}
         shadow-camera-far={10}
@@ -208,7 +212,11 @@ function Scene() {
         shadow-mapSize={[512, 512]}
       />
       <ambientLight intensity={2} />
-      <ContactShadows
+      <Sky
+        sunPosition={skyOptions.sunPosition}
+        mieCoefficient={skyOptions.mieCoefficient}
+      />
+      {/* <ContactShadows
         frames={1}
         position={[0, -0.99, 0]}
         scale={contactShadowOptions.scale}
@@ -217,11 +225,11 @@ function Scene() {
         color={contactShadowOptions.color}
         opacity={contactShadowOptions.opacity}
         blur={contactShadowOptions.blur}
-      />
-      {/* <AccumulativeShadows
+      /> */}
+      <AccumulativeShadows
         position={[0, -0.99, 0]}
         opacity={0.7}
-        color="#316d39"
+        color="#87CEFA"
         frames={Infinity}
         blend={150}
         temporal
@@ -233,7 +241,7 @@ function Scene() {
           intensity={3}
           bias={0.001}
         />
-      </AccumulativeShadows> */}
+      </AccumulativeShadows>
       <group ref={groupRef}>
         <Sphere ref={sphereRef} cubeRef={cubeRef} />
         <Box ref={cubeRef} />

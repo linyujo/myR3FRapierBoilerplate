@@ -9,11 +9,11 @@ import Scene from './components/Scene'
 function App() {
   return (
     <StrictMode>
-      <div className="w-full h-screen bg-blue-200 position-fixed top-0 left-0 outline-none">
+      <div className="w-full h-screen position-fixed top-0 left-0 outline-none">
         <Leva collapsed />
         <Canvas
           // orthographic
-          // shadows
+          shadows
           gl={{
             alpha: true,
             antialias: true, // 抗鋸齒
@@ -32,7 +32,7 @@ function App() {
           }}
         >
           <Physics>
-            <color attach="background" args={['#E0FFFF']} />
+            {/* <color attach="background" args={['#E0FFFF']} /> */}
             <Scene />
           </Physics>
         </Canvas>
