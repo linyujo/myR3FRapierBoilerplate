@@ -32,7 +32,7 @@ function App() {
           }}
         >
           <Physics>
-            <color attach="background" args={['#000000']} />
+            <color attach="background" args={['#E0FFFF']} />
             <Scene />
           </Physics>
         </Canvas>

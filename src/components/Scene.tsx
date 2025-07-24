@@ -8,6 +8,8 @@ import {
   useHelper,
   SoftShadows,
   BakeShadows,
+  RandomizedLight,
+  AccumulativeShadows,
   OrbitControls,
   // TransformControls,
   PivotControls,
@@ -33,7 +35,7 @@ const Sphere = forwardRef(({ cubeRef }: TSphereProps, ref) => {
       min: -4,
       max: 4,
       step: 0.2,
-      joystick: 'invertY',
+      joystick: 'invertZ',
     },
     color: '#FFA07A',
     visible: true,
@@ -81,7 +83,7 @@ const Box = forwardRef((props, ref) => {
       min: -4,
       max: 4,
       step: 0.2,
-      joystick: 'invertY',
+      joystick: 'invertZ',
     },
     rotationX: {
       value: 0,
@@ -122,7 +124,7 @@ const Box = forwardRef((props, ref) => {
 })
 
 const Ground = () => (
-  <mesh receiveShadow position-y={-1} rotation-x={-Math.PI * 0.5} scale={10}>
+  <mesh position-y={-1} rotation-x={-Math.PI * 0.5} scale={10}>
     <planeGeometry />
     <MeshReflectorMaterial
       resolution={512}
@@ -180,7 +182,7 @@ function Scene() {
   return (
     <>
       {/* <BakeShadows /> */}
-      <SoftShadows size={25} samples={10} focus={0} />
+      {/* <SoftShadows size={25} samples={10} focus={0} /> */}
       <directionalLight
         castShadow
         ref={directionalLight}
@@ -195,6 +197,22 @@ function Scene() {
         shadow-mapSize={[512, 512]}
       />
       <ambientLight intensity={2} />
+      <AccumulativeShadows
+        position={[0, -0.99, 0]}
+        opacity={0.7}
+        color="#316d39"
+        frames={Infinity}
+        blend={150}
+        temporal
+      >
+        <RandomizedLight
+          position={[1, 2, 3]}
+          amount={8}
+          radius={1}
+          intensity={3}
+          bias={0.001}
+        />
+      </AccumulativeShadows>
       <group ref={groupRef}>
         <Sphere ref={sphereRef} cubeRef={cubeRef} />
         <Box ref={cubeRef} />
