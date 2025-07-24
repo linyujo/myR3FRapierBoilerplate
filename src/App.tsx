@@ -13,7 +13,7 @@ function App() {
         <Leva collapsed />
         <Canvas
           // orthographic
-          shadows
+          // shadows
           gl={{
             alpha: true,
             antialias: true, // 抗鋸齒

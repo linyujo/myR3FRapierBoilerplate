@@ -9,6 +9,7 @@ import {
   SoftShadows,
   BakeShadows,
   RandomizedLight,
+  ContactShadows,
   AccumulativeShadows,
   OrbitControls,
   // TransformControls,
@@ -146,6 +147,17 @@ function Scene() {
   const { perfVisible } = useControls({
     perfVisible: true,
   })
+  const contactShadowOptions = useControls('ContactShadows', {
+    scale: { value: 10, min: 0, max: 10 },
+    resolution: { value: 512, min: 128, max: 1024 },
+    far: { value: 5, min: 0, max: 10 },
+    color: '#1d8f75',
+    opacity: { value: 0.5, min: 0, max: 1 },
+    blur: { value: 1, min: 0, max: 10 },
+  })
+  const skyOptions = useControls('Sky', {
+    sunPosition: { value: [1, 2, 3] },
+  })
   // useHelper(directionalLight, THREE.DirectionalLightHelper, 1)
 
   useFrame((state, delta) => {
@@ -176,7 +188,6 @@ function Scene() {
         cameraHelper.dispose?.()
       }
     }
-    scene.background = new THREE.Color('lightblue')
   }, [scene])
 
   return (
@@ -197,7 +208,17 @@ function Scene() {
         shadow-mapSize={[512, 512]}
       />
       <ambientLight intensity={2} />
-      <AccumulativeShadows
+      <ContactShadows
+        frames={1}
+        position={[0, -0.99, 0]}
+        scale={contactShadowOptions.scale}
+        resolution={contactShadowOptions.resolution}
+        far={contactShadowOptions.far}
+        color={contactShadowOptions.color}
+        opacity={contactShadowOptions.opacity}
+        blur={contactShadowOptions.blur}
+      />
+      {/* <AccumulativeShadows
         position={[0, -0.99, 0]}
         opacity={0.7}
         color="#316d39"
@@ -212,7 +233,7 @@ function Scene() {
           intensity={3}
           bias={0.001}
         />
-      </AccumulativeShadows>
+      </AccumulativeShadows> */}
       <group ref={groupRef}>
         <Sphere ref={sphereRef} cubeRef={cubeRef} />
         <Box ref={cubeRef} />
