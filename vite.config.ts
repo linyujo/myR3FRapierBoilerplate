@@ -9,6 +9,7 @@ export default defineConfig({
     port: 3100,
   },
   optimizeDeps: {
-    include: ['three']
-  }
+    include: ['three'],
+  },
+  assetsInclude: ['**/*.hdr'],
 })

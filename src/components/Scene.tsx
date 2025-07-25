@@ -15,11 +15,14 @@ import {
   OrbitControls,
   // TransformControls,
   PivotControls,
+  Environment,
+  Lightformer,
   MeshReflectorMaterial,
 } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
 import { useControls, button } from 'leva'
 import rubikDirt from '../fonts/rubik-dirt-v2-latin-regular.woff'
+import { citrusOrchardPureSky } from '../assets/environmentMaps'
 // import CustomObject from './CustomObject'
 
 /**
@@ -129,11 +132,11 @@ const Ground = () => (
   <mesh position-y={-1} rotation-x={-Math.PI * 0.5} scale={10}>
     <planeGeometry />
     <MeshReflectorMaterial
-      resolution={512}
-      blur={[1000, 1000]}
+      resolution={1024}
+      blur={[512, 512]}
       mixBlur={0.5}
       mirror={0.6}
-      color="lightcyan"
+      // color="lightcyan"
     />
   </mesh>
 )
@@ -161,6 +164,9 @@ function Scene() {
       value: [1, 2, 3],
     },
     mieCoefficient: { value: 0.01, min: 0, max: 0.1 },
+  })
+  const environmentMapOptions = useControls('environmentMap', {
+    envMapIntensity: { value: 1.1, min: 0, max: 12 },
   })
   // useHelper(directionalLight, THREE.DirectionalLightHelper, 1)
 
@@ -194,11 +200,17 @@ function Scene() {
     }
   }, [scene])
 
+  useEffect(() => {
+    if (scene.environmentIntensity) {
+      scene.environmentIntensity = environmentMapOptions.envMapIntensity
+    }
+  }, [environmentMapOptions, scene])
+
   return (
     <>
       {/* <BakeShadows /> */}
       {/* <SoftShadows size={25} samples={10} focus={0} /> */}
-      <directionalLight
+      {/* <directionalLight
         castShadow
         ref={directionalLight}
         position={skyOptions.sunPosition}
@@ -210,12 +222,12 @@ function Scene() {
         shadow-camera-bottom={-5}
         shadow-camera-left={-5}
         shadow-mapSize={[512, 512]}
-      />
-      <ambientLight intensity={2} />
-      <Sky
+      /> */}
+      {/* <ambientLight intensity={2} /> */}
+      {/* <Sky
         sunPosition={skyOptions.sunPosition}
         mieCoefficient={skyOptions.mieCoefficient}
-      />
+      /> */}
       {/* <ContactShadows
         frames={1}
         position={[0, -0.99, 0]}
@@ -226,8 +238,19 @@ function Scene() {
         opacity={contactShadowOptions.opacity}
         blur={contactShadowOptions.blur}
       /> */}
+      <Environment background files={citrusOrchardPureSky}>
+        <color attach="background" args={['black']} />
+        <Lightformer
+          position={[1, 2, 5]}
+          // position-z={5}
+          scale={5}
+          color="#FFD700"
+          intensity={10}
+          form="ring"
+        />
+      </Environment>
       <AccumulativeShadows
-        position={[0, -0.99, 0]}
+        position={[0, -0.98, 0]}
         opacity={0.7}
         color="#87CEFA"
         frames={Infinity}
@@ -262,7 +285,7 @@ function Scene() {
           {/* <meshToonMaterial /> */}
         </Text>
       </Float>
-      <OrbitControls makeDefault args={[camera, gl.domElement]} />
+      <OrbitControls makeDefault />
       {/* makeDefault: 操控TransformControls時，不會與OrbitControls衝突 */}
       {perfVisible && <Perf position="top-left" />}
     </>
