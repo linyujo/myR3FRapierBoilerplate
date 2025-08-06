@@ -1,6 +1,7 @@
 import { useRef, forwardRef, Ref } from 'react'
+import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
-import { OrbitControls, MeshReflectorMaterial } from '@react-three/drei'
+import { OrbitControls, MeshReflectorMaterial, useGLTF } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
 import { useControls } from 'leva'
 
@@ -10,6 +11,11 @@ const FirstGeometry = forwardRef((props, ref) => (
     <meshNormalMaterial />
   </mesh>
 ))
+
+const Hamburger = () => {
+  const { scene } = useGLTF('../../static/hamburger.glb')
+  return <primitive object={scene} scale={ 0.5 } position={[0, 0, 0]} />
+}
 
 const Ground = () => (
   <mesh position-y={-1} rotation-x={-Math.PI * 0.5} scale={10}>
@@ -36,7 +42,7 @@ function Scene() {
     <>
       <ambientLight intensity={3} />
       <directionalLight position={[1, 2, 3]} intensity={5} />
-      <FirstGeometry ref={torusKnotRef} />
+      <Hamburger />
       <Ground />
       <OrbitControls />
       {perfVisible && <Perf position="top-left" />}

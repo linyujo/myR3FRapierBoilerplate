@@ -7,7 +7,7 @@ import { Leva } from 'leva'
 function App() {
   return (
     <StrictMode>
-      <div className="w-full h-screen bg-black position-fixed top-0 left-0 outline-none">
+      <div className="w-full h-screen position-fixed top-0 left-0 outline-none">
         <Leva collapsed />
         <Canvas gl={{ alpha: true }}>
           <Physics>
