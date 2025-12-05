@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Physics } from '@react-three/rapier'
-import Scene from './components/Scene'
+import Scene from '@/components/Scene'
 import { Leva } from 'leva'
 
 function App() {
