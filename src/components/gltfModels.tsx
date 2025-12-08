@@ -33,11 +33,29 @@ const Hamburger = (props: { scale: number }) => {
   const { nodes, materials } = useGLTF('/static/hamburger.glb') as unknown as GLTFHamburger;
   return (
     <group dispose={null} scale={props.scale}>
-      <mesh name="BottomBum" geometry={nodes.BottomBum.geometry} material={materials.BumMaterial} />
-      <mesh name="Meat" geometry={nodes.Meat.geometry} material={materials.meatMaterial} />
-      <mesh name="Cheese" geometry={nodes.Cheese.geometry} material={materials.cheeseMaterial} />
+      <mesh name="BottomBum"
+        receiveShadow
+        castShadow
+        geometry={nodes.BottomBum.geometry}
+        material={materials.BumMaterial}
+      />
+      <mesh
+        name="Meat"
+        receiveShadow
+        castShadow
+        geometry={nodes.Meat.geometry}
+        material={materials.meatMaterial}
+      />
+      <mesh
+        name="Cheese"
+        receiveShadow castShadow
+        geometry={nodes.Cheese.geometry}
+        material={materials.cheeseMaterial}
+      />
       <mesh
         name="TopBum"
+        receiveShadow
+        castShadow
         geometry={nodes.TopBum.geometry}
         material={materials.BumMaterial}
         position={[0, 4.674, 0.001]}

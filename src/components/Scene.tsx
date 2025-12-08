@@ -1,12 +1,12 @@
 import { useRef, forwardRef, Ref, Suspense } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { OrbitControls, ContactShadows } from '@react-three/drei'
+import { OrbitControls, ContactShadows, SoftShadows } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
 import { useControls, button } from 'leva'
 import { FlightHelmet, WireFrameFallback, Hamburger } from './gltfModels'
 
 const Ground = () => (
-  <mesh position-y={-1} rotation-x={-Math.PI * 0.5} scale={10}>
+  <mesh receiveShadow position-y={-1} rotation-x={-Math.PI * 0.5} scale={10}>
     <planeGeometry args={[1, 1]} />
     <meshStandardMaterial color="#81a968" />
   </mesh>
@@ -35,17 +35,10 @@ function Scene() {
         shadow-camera-right={5}
         shadow-camera-bottom={-5}
         shadow-camera-left={-5}
+        shadow-bias={0.04}
         shadow-mapSize={[512, 512]}
       />
-      <ContactShadows
-        position={[0, -0.99, 0]}
-        scale={10}
-        resolution={512}
-        far={5}
-        color="#062032"
-        opacity={0.4}
-        blur={1.5}
-      />
+      <SoftShadows size={1} />
       <Ground />
       {/* <Suspense fallback={<FlightHelmetFallback position={[0, 1, 0]} scale={[2, 2.5, 2]} />}>
         <FlightHelmet />

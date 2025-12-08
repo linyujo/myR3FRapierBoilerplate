@@ -17,7 +17,7 @@ function App() {
             position: [-4, 3, 6],
           }}
           gl={{ alpha: true }}
-          shadows={false}
+          shadows={true}
         >
           <Physics>
             <Scene />
