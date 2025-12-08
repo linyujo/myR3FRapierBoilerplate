@@ -1,70 +1,9 @@
-import { useRef, forwardRef, Ref } from 'react'
+import { useRef, forwardRef, Ref, Suspense } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { OrbitControls, ContactShadows } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
 import { useControls, button } from 'leva'
-
-const Sphere = () => {
-  const { position, color, visible } = useControls('sphere', {
-    position: {
-      value: { x: -2, z: 0 },
-      min: -4,
-      max: 4,
-      step: 0.2,
-      joystick: 'invertZ',
-    },
-    color: '#FFA07A',
-    visible: true,
-    clickMe: button(() => {
-      console.log('sphere click')
-    }),
-  })
-  return (
-    <>
-      <mesh castShadow visible={visible} position={[position.x, 0, position.z]}>
-        <sphereGeometry />
-        <meshStandardMaterial color={color} />
-      </mesh>
-    </>
-  )
-}
-
-const Box = forwardRef<THREE.Mesh, {}>((props, ref) => {
-  const { position, color, visible, rotationX } = useControls('cube', {
-    position: {
-      value: { x: 2, z: 0 },
-      min: -4,
-      max: 4,
-      step: 0.2,
-      joystick: 'invertZ',
-    },
-    rotationX: {
-      value: 0,
-      step: Math.PI * 0.25,
-      min: -Math.PI * 2,
-      max: Math.PI * 2,
-    },
-    color: '#9370DB',
-    visible: true,
-    clickMe: button(() => {
-      console.log('cube click')
-    }),
-  })
-  return (
-    <mesh
-      ref={ref}
-      castShadow
-      visible={visible}
-      position={[position.x, 1, position.z]}
-      scale={1.5}
-      rotation-x={rotationX}
-      rotation-y={Math.PI * 0.25}
-    >
-      <boxGeometry />
-      <meshStandardMaterial color={color} />
-    </mesh>
-  )
-})
+import { FlightHelmet, WireFrameFallback, Hamburger } from './gltfModels'
 
 const Ground = () => (
   <mesh position-y={-1} rotation-x={-Math.PI * 0.5} scale={10}>
@@ -107,9 +46,13 @@ function Scene() {
         opacity={0.4}
         blur={1.5}
       />
-      <Sphere />
-      <Box ref={cubeRef} />
       <Ground />
+      {/* <Suspense fallback={<FlightHelmetFallback position={[0, 1, 0]} scale={[2, 2.5, 2]} />}>
+        <FlightHelmet />
+      </Suspense> */}
+      <Suspense fallback={<WireFrameFallback position={[0, 1, 0]} scale={[3, 2, 3]} />}>
+        <Hamburger scale={0.35} />
+      </Suspense>
       <OrbitControls />
       {perfVisible && <Perf position="top-left" />}
     </>
