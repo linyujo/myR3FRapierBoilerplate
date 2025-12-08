@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { OrbitControls, ContactShadows, SoftShadows } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
 import { useControls, button } from 'leva'
-import { FlightHelmet, WireFrameFallback, Hamburger } from './gltfModels'
+import { FlightHelmet, WireFrameFallback, Hamburger, Fox } from './gltfModels'
 
 const Ground = () => (
   <mesh receiveShadow position-y={-1} rotation-x={-Math.PI * 0.5} scale={10}>
@@ -45,6 +45,9 @@ function Scene() {
       </Suspense> */}
       <Suspense fallback={<WireFrameFallback position={[0, 1, 0]} scale={[3, 2, 3]} />}>
         <Hamburger scale={0.35} />
+      </Suspense>
+      <Suspense fallback={<WireFrameFallback position={[0, 1, 0]} scale={[2, 2, 2]} />}>
+        <Fox />
       </Suspense>
       <OrbitControls />
       {perfVisible && <Perf position="top-left" />}

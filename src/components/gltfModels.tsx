@@ -1,5 +1,8 @@
-import { useGLTF, Clone } from '@react-three/drei'
+import { useEffect, useState } from 'react'
+import { useGLTF, Clone, useAnimations } from '@react-three/drei'
 import { GLTF } from 'three-stdlib'
+import { useControls } from 'leva'
+import * as THREE from 'three'
 
 const FlightHelmet = () => {
   const { scene: flightHelmet } = useGLTF('/static/FlightHelmet/glTF/FlightHelmet.gltf')
@@ -65,6 +68,49 @@ const Hamburger = (props: { scale: number }) => {
   );
 }
 
+const Fox = () => {
+  const { scene: fox, animations: foxAnimations } = useGLTF('/static/Fox/glTF/Fox.gltf');
+  const { actions: animateActions, names: animateNames } = useAnimations(foxAnimations, fox);
+
+  const animationControls = useControls({
+    animationType: {
+      options: animateNames,
+    },
+  });
+
+  // 因爲GLTF模型通常包含多個子mesh，需要foreach每個子mesh來啟用影子
+  useEffect(() => {
+    fox.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+  }, [fox]);
+
+  useEffect(() => {
+    const currentAnimationType = animationControls.animationType;
+    if (currentAnimationType) {
+      animateActions[currentAnimationType]
+        ?.reset()
+        .fadeIn(0.5)
+        .play();
+    }
+    return () => {
+      animateActions[currentAnimationType]?.fadeOut(0.5);
+    }
+  }, [animationControls.animationType]);
+
+  return (
+    <primitive
+      object={fox}
+      scale={0.03}
+      position={[-2.5, -1, 2]}
+      rotation-y={Math.PI / 4}
+    />
+  );
+}
+
 /*
 const Hamburgers = () => {
   const { scene: hamburger } = useGLTF('/static/hamburger.glb');
@@ -79,4 +125,4 @@ const Hamburgers = () => {
 }
 */
 
-export { FlightHelmet, WireFrameFallback, Hamburger }
+export { FlightHelmet, WireFrameFallback, Hamburger, Fox }
