@@ -10,18 +10,19 @@ function App() {
       <div className="w-full h-screen position-fixed top-0 left-0 outline-none">
         <Leva collapsed />
         <Canvas
+          flat
           camera={{
             fov: 45,
             near: 0.1,
             far: 200,
-            position: [-4, 3, 6],
+            position: [1, 2, 6],
           }}
           gl={{ alpha: true }}
           shadows={false}
         >
           <Physics>
             <Scene />
-            {/* <color attach="background" args={['#E0FFFF']} /> */}
+            <color attach="background" args={['#201919']} />
           </Physics>
         </Canvas>
       </div>
