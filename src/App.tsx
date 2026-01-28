@@ -10,6 +10,7 @@ function App() {
       <div className="w-full h-screen position-fixed top-0 left-0 outline-none">
         <Leva collapsed />
         <Canvas
+          flat
           camera={{
             fov: 45,
             near: 0.1,
@@ -21,7 +22,7 @@ function App() {
         >
           <Physics>
             <Scene />
-            {/* <color attach="background" args={['#E0FFFF']} /> */}
+            <color attach="background" args={['#2A1D5CFF']} />
           </Physics>
         </Canvas>
       </div>
