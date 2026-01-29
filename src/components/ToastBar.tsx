@@ -1,4 +1,5 @@
 import { useGLTF, useTexture } from '@react-three/drei'
+import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useMemo, useLayoutEffect, useRef } from 'react'
 import type { GLTF } from 'three-stdlib'
@@ -88,9 +89,9 @@ function validateNodeDistribution(points: THREE.Vector3[]): void {
   }
 }
 
-const Portal = () => {
+const ToastBar = () => {
   const { nodes } = useGLTF('/static/models/project2/project2_2_conveyorVert_to_mesh.glb') as unknown as GLTFPortal
-  const bakedTexture = useTexture('/static/models/project2/project2_baked_1.jpg')
+  const bakedTexture = useTexture('/static/models/project2/project2_baked_2.jpg')
   bakedTexture.flipY = false
 
   console.log('🌦️ nodes', nodes);
@@ -165,6 +166,28 @@ const Portal = () => {
     console.log('✅ Positioned', count, 'wheels')
   }, [nodePoints])
 
+  // Animate wheels rotation
+  useFrame((_state, delta) => {
+    if (!wheelRef.current) return
+
+    const rotationSpeed = 3 // Adjust rotation speed here
+    const tempObject = new THREE.Object3D()
+
+    for (let i = 0; i < nodePoints.length; i++) {
+      // Get current matrix
+      wheelRef.current.getMatrixAt(i, tempObject.matrix)
+      tempObject.matrix.decompose(tempObject.position, tempObject.quaternion, tempObject.scale)
+
+      // Rotate around Y axis (vertical axis)
+      tempObject.rotateZ(delta * rotationSpeed)
+
+      tempObject.updateMatrix()
+      wheelRef.current.setMatrixAt(i, tempObject.matrix)
+    }
+
+    wheelRef.current.instanceMatrix.needsUpdate = true
+  })
+
 
   return (
     <>
@@ -179,4 +202,4 @@ const Portal = () => {
   )
 }
 
-export default Portal
+export default ToastBar

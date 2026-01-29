@@ -22,7 +22,7 @@ function App() {
         >
           <Physics>
             <Scene />
-            <color attach="background" args={['#2A1D5CFF']} />
+            <color attach="background" args={['#2A1D5C']} />
           </Physics>
         </Canvas>
       </div>
